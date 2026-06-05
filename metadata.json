@@ -1,0 +1,6 @@
+{
+  "name": "FitForge AI",
+  "description": "An intelligent, AI-powered personal space for tailored workout plans, posture form checking, nutrition templates, recovery tracking, and smart coaching.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
