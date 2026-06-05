@@ -340,23 +340,23 @@ export default function App() {
       <main className="flex-1 w-full max-w-7xl mx-auto py-6 px-4">
         {viewMode === "phone" ? (
           /* Phone Shell Frame Representation to deliver "please make it a mobile app" */
-          <div className="flex justify-center items-center py-4">
-            <div className="w-[385px] h-[780px] bg-[#0c0c10] border-[10px] border-[#1d1d23] rounded-[45px] shadow-[0_25px_60px_rgba(0,0,0,0.8)] relative overflow-hidden flex flex-col justify-between ring-1 ring-white/10">
+          <div className="flex justify-center items-center py-0 sm:py-4 w-full">
+            <div className="w-full max-w-[390px] min-h-[700px] h-[calc(100vh-140px)] sm:h-[780px] bg-[#0c0c10] border-0 sm:border-[10px] border-[#1d1d23] rounded-none sm:rounded-[45px] shadow-none sm:shadow-[0_25px_60px_rgba(0,0,0,0.8)] relative overflow-hidden flex flex-col justify-between ring-0 sm:ring-1 sm:ring-white/10">
               
               {/* iPhone Notch Speaker details */}
-              <div className="absolute top-0 inset-x-0 h-6 flex justify-center z-50">
+              <div className="absolute top-0 inset-x-0 h-6 hidden sm:flex justify-center z-50">
                 <div className="w-32 bg-[#1d1d23] h-4 rounded-b-2xl flex items-center justify-center">
                   <div className="w-8 h-1 bg-black/60 rounded-full" />
                 </div>
               </div>
 
               {/* Scrollable Mobile Body */}
-              <div className="flex-1 overflow-y-auto px-4 pt-8 pb-4 space-y-4">
+              <div className="flex-1 overflow-y-auto px-4 pt-4 sm:pt-8 pb-4 space-y-4">
                 {renderActiveView()}
               </div>
 
               {/* Standard Smartphone dense Bottom Bar Navigation with touch targets */}
-              <nav className="bg-[#121218] border-t border-slate-900 pb-2.5 pt-2 px-1 flex justify-around items-center text-[9px] text-slate-500 sticky bottom-0 z-40 rounded-b-[35px]">
+              <nav className="bg-[#121218] border-t border-slate-900 pb-2.5 pt-2 px-1 flex justify-around items-center text-[9px] text-slate-500 sticky bottom-0 z-40 rounded-none sm:rounded-b-[35px]">
                 {tabsList.slice(0, 5).map((tb) => {
                   const Icon = tb.icon;
                   const active = activeTab === tb.id;
