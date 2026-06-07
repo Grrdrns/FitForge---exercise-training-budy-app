@@ -115,8 +115,8 @@ export default function ExerciseLibraryView({ exercisesList }: ExerciseLibraryVi
 
       {/* Main split display list vs detail */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pb-6">
-        {/* Exercises list column - col-span-5 */}
-        <div className="lg:col-span-5 bg-[#121218] border border-slate-800 rounded-3xl p-4 max-h-[600px] overflow-y-auto space-y-2">
+        {/* Exercises list column - max-h-none on mobile, scrollable on lg screens */}
+        <div className="lg:col-span-5 bg-[#121218] border border-slate-800 rounded-3xl p-4 lg:max-h-[600px] lg:overflow-y-auto space-y-2">
           <div className="flex justify-between items-center px-2 py-1 border-b border-slate-900 pb-2">
             <span className="text-xs text-slate-400 font-bold">{filteredList.length} movements loaded</span>
             <span className="text-[10px] text-lime-400 font-mono">Dynamic filtering live</span>
@@ -125,28 +125,100 @@ export default function ExerciseLibraryView({ exercisesList }: ExerciseLibraryVi
           {filteredList.map((exercise) => {
             const isActive = activeExercise?.id === exercise.id;
             return (
-              <button
-                key={exercise.id}
-                onClick={() => setActiveExercise(exercise)}
-                className={`w-full text-left p-3.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-4 ${
-                  isActive
-                    ? "bg-lime-400/5 border-lime-400 text-lime-400 shadow-[0_0_8px_rgba(163,230,53,0.05)]"
-                    : "bg-slate-900/40 border-slate-900 text-slate-300 hover:border-slate-800 hover:bg-slate-900/80"
-                }`}
-              >
-                <div>
-                  <h4 className="text-xs font-bold leading-snug">{exercise.name}</h4>
-                  <div className="flex items-center gap-1.5 mt-1">
-                    <span className="bg-slate-950 px-1.5 py-0.5 rounded text-[9px] text-slate-400">
-                      {exercise.targetMuscle.join(", ")}
-                    </span>
-                    <span className="text-[9px] text-slate-500 uppercase">
-                      {exercise.difficulty}
-                    </span>
+              <div key={exercise.id} className="space-y-2">
+                <button
+                  onClick={() => {
+                    if (isActive) {
+                      setActiveExercise(null);
+                    } else {
+                      setActiveExercise(exercise);
+                    }
+                  }}
+                  className={`w-full text-left p-3.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-4 ${
+                    isActive
+                      ? "bg-lime-400/5 border-lime-400 text-lime-400 shadow-[0_0_8px_rgba(163,230,53,0.05)]"
+                      : "bg-slate-900/40 border-slate-900 text-slate-300 hover:border-slate-800 hover:bg-slate-900/80"
+                  }`}
+                >
+                  <div>
+                    <h4 className="text-xs font-bold leading-snug">{exercise.name}</h4>
+                    <div className="flex items-center gap-1.5 mt-1">
+                      <span className="bg-slate-950 px-1.5 py-0.5 rounded text-[9px] text-slate-400">
+                        {exercise.targetMuscle.join(", ")}
+                      </span>
+                      <span className="text-[9px] text-slate-500 uppercase">
+                        {exercise.difficulty}
+                      </span>
+                    </div>
                   </div>
-                </div>
-                <ChevronRight className={`w-4 h-4 text-slate-600 transition-transform ${isActive ? "rotate-90 text-lime-400" : ""}`} />
-              </button>
+                  <ChevronRight className={`w-4 h-4 text-slate-600 transition-transform ${isActive ? "rotate-90 text-lime-400" : ""}`} />
+                </button>
+
+                {/* Inline expanding context specifically for smaller/mobile viewports */}
+                {isActive && (
+                  <div className="block lg:hidden bg-slate-950 border border-slate-900 p-4 rounded-2xl space-y-4">
+                    <div className="flex justify-between items-start pb-3 border-b border-slate-900">
+                      <div>
+                        <div className="flex flex-wrap gap-1">
+                          {exercise.targetMuscle.map(m => (
+                            <span key={m} className="bg-lime-400/10 text-lime-400 font-bold border border-lime-400/20 px-2 py-0.5 rounded text-[9px]">
+                              {m}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-[8px] text-slate-500 uppercase font-black block">Equipment</span>
+                        <span className="text-[10px] text-slate-300 font-semibold">{exercise.equipmentNeeded.join(", ")}</span>
+                      </div>
+                    </div>
+
+                    {/* Live joint motion simulator */}
+                    <div className="space-y-1">
+                      <span className="text-[9px] text-lime-400 uppercase font-black tracking-widest block">Interactive Biomechanics Demo</span>
+                      <ExerciseMotionVisualizer exercise={exercise} />
+                    </div>
+
+                    {/* Steps Instructions */}
+                    <div className="space-y-2">
+                      <h4 className="text-[10.5px] uppercase font-black text-slate-400 tracking-wider">How to perform</h4>
+                      <ol className="list-decimal list-inside space-y-1.5 text-[11px] text-slate-300 leading-relaxed">
+                        {exercise.instructions.map((stepStr, idx) => (
+                          <li key={idx}>
+                            {stepStr}
+                          </li>
+                        ))}
+                      </ol>
+                    </div>
+
+                    {/* Common mistakes */}
+                    <div className="p-3 bg-red-950/20 border border-red-500/10 rounded-xl space-y-1">
+                      <h4 className="text-[10.5px] uppercase font-black text-red-400 tracking-wider flex items-center gap-1 animate-pulse">
+                        <Sparkles className="w-3 h-3 text-orange-400" /> Common Mistakes
+                      </h4>
+                      <ul className="list-disc list-inside space-y-1 text-[11px] text-slate-450">
+                        {exercise.commonMistakes.map((mistake, idx) => (
+                          <li key={idx}>{mistake}</li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Alternatives */}
+                    {exercise.alternatives && exercise.alternatives.length > 0 && (
+                      <div className="space-y-1 pt-1">
+                        <h4 className="text-[10px] uppercase font-black text-slate-500 tracking-wider">Alternatives</h4>
+                        <div className="flex flex-wrap gap-1.5">
+                          {exercise.alternatives.map((alt, idx) => (
+                            <span key={idx} className="bg-slate-900 border border-slate-850 px-2 py-1 rounded-lg text-[10px] text-slate-300">
+                              {alt}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             );
           })}
 
@@ -157,8 +229,8 @@ export default function ExerciseLibraryView({ exercisesList }: ExerciseLibraryVi
           )}
         </div>
 
-        {/* Workout Technique detailed board - col-span-7 */}
-        <div className="lg:col-span-7">
+        {/* Workout Technique detailed board - hidden on mobile, visible on lg screens */}
+        <div className="hidden lg:block lg:col-span-7">
           {activeExercise ? (
             <div className="bg-[#121218] border border-slate-800 rounded-3xl p-6 space-y-6 select-none">
               <div className="flex justify-between items-start pb-4 border-b border-slate-900">
