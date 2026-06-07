@@ -63,43 +63,49 @@ export default function ExerciseLibraryView({ exercisesList }: ExerciseLibraryVi
         {/* Triple filter lines */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {/* Muscle Focus selector */}
-          <div className="space-y-1.5">
-            <span className="text-[10px] text-slate-500 uppercase font-black tracking-wider block">Muscular System Target</span>
+          <div className="space-y-1.5 flex flex-col justify-end">
+            <span className="text-[10px] text-slate-500 uppercase font-black tracking-wider block min-h-[24px] sm:min-h-[32px] flex items-end leading-tight">
+              Muscular System Target
+            </span>
             <select
               value={selectedMuscle}
               onChange={(e) => setSelectedMuscle(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-850 rounded-xl py-2 px-3 text-xs text-slate-300 focus:outline-none"
+              className="w-full bg-slate-950 border border-slate-850 rounded-xl py-2 px-3 text-xs text-slate-300 focus:outline-none focus:ring-1 focus:ring-lime-400"
             >
               {muscles.map(m => (
-                <option key={m} value={m}>{m} Focus</option>
+                <option key={m} value={m}>{m === "All" ? "All Targets" : `${m} Focus`}</option>
               ))}
             </select>
           </div>
 
           {/* Equipment selector */}
-          <div className="space-y-1.5">
-            <span className="text-[10px] text-slate-500 uppercase font-black tracking-wider block">Equipment Config</span>
+          <div className="space-y-1.5 flex flex-col justify-end">
+            <span className="text-[10px] text-slate-500 uppercase font-black tracking-wider block min-h-[24px] sm:min-h-[32px] flex items-end leading-tight">
+              Equipment Config
+            </span>
             <select
               value={selectedEquip}
               onChange={(e) => setSelectedEquip(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-850 rounded-xl py-2 px-3 text-xs text-slate-300 focus:outline-none"
+              className="w-full bg-slate-950 border border-slate-850 rounded-xl py-2 px-3 text-xs text-slate-300 focus:outline-none focus:ring-1 focus:ring-lime-400"
             >
               {equipmentOptions.map(e => (
-                <option key={e} value={e}>{e === "All" ? "Any Equipment" : e}</option>
+                <option key={e} value={e}>{e === "All" ? "All Equipment" : e}</option>
               ))}
             </select>
           </div>
 
           {/* Level Filter */}
-          <div className="space-y-1.5">
-            <span className="text-[10px] text-slate-500 uppercase font-black tracking-wider block">Athlete Level Threshold</span>
+          <div className="space-y-1.5 flex flex-col justify-end">
+            <span className="text-[10px] text-slate-500 uppercase font-black tracking-wider block min-h-[24px] sm:min-h-[32px] flex items-end leading-tight">
+              Athlete Level Threshold
+            </span>
             <select
               value={selectedDiff}
               onChange={(e) => setSelectedDiff(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-850 rounded-xl py-2 px-3 text-xs text-slate-300 focus:outline-none"
+              className="w-full bg-slate-950 border border-slate-850 rounded-xl py-2 px-3 text-xs text-slate-300 focus:outline-none focus:ring-1 focus:ring-lime-400"
             >
               {diffs.map(d => (
-                <option key={d} value={d}>{d === "All" ? "Any Athlete Level" : `${d} Standard`}</option>
+                <option key={d} value={d}>{d === "All" ? "All Levels" : `${d} Level`}</option>
               ))}
             </select>
           </div>

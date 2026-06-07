@@ -7,6 +7,7 @@ import {
 
 interface NutritionViewProps {
   profile: UserProfile;
+  isPhoneMode?: boolean;
 }
 
 interface GeneratedNutritionPlan {
@@ -16,7 +17,7 @@ interface GeneratedNutritionPlan {
   summary: { calories: number; protein: number; carbs: number; fat: number; water: number };
 }
 
-export default function NutritionView({ profile }: NutritionViewProps) {
+export default function NutritionView({ profile, isPhoneMode = false }: NutritionViewProps) {
   const [dietRestriction, setDietRestriction] = useState<string>("None");
   const [activityFactor, setActivityFactor] = useState<string>("Active");
   const [loading, setLoading] = useState(false);
@@ -175,7 +176,7 @@ export default function NutritionView({ profile }: NutritionViewProps) {
       </div>
 
       {/* Goal restrictions entry panel */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className={`grid gap-4 ${isPhoneMode ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2"}`}>
         {/* Constraints input container */}
         <div className="bg-[#121218] border border-slate-800 rounded-3xl p-5 space-y-4">
           <h3 className="font-bold text-white text-sm flex items-center gap-2">
@@ -186,7 +187,7 @@ export default function NutritionView({ profile }: NutritionViewProps) {
             Select dietary constraints or restrictions. The AI will immediately reconstruct fuel suggestions to exclude unwanted food groups.
           </p>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className={`grid gap-3.5 ${isPhoneMode ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2"}`}>
             <div className="space-y-1.5">
               <span className="text-[10px] text-slate-500 uppercase font-black tracking-wider block">Dietary Restrictions</span>
               <select
@@ -235,17 +236,17 @@ export default function NutritionView({ profile }: NutritionViewProps) {
 
         {/* Macros Summary Panel */}
         <div className="bg-[#121218] border border-slate-800 rounded-3xl p-5 space-y-6 flex flex-col justify-between">
-          <div className="flex justify-between items-center text-xs">
-            <span className="font-extrabold text-white tracking-wide uppercase">Calculated daily metrics</span>
-            <span className="text-lime-400 font-mono font-bold">{totalCaloriesGoal} KCAL GOAL</span>
+          <div className="flex flex-col sm:flex-row justify-between sm:items-center text-xs gap-1.5 pb-2 border-b border-slate-900/40">
+            <span className="font-extrabold text-slate-400 tracking-wide uppercase">Daily Fuel Budget</span>
+            <span className="text-lime-400 font-mono font-black">{totalCaloriesGoal} KCAL GOAL</span>
           </div>
 
           <div className="space-y-4">
             {/* Protein bar */}
             <div className="space-y-1">
               <div className="flex justify-between text-xs font-mono font-semibold">
-                <span className="text-slate-400">Protein Target</span>
-                <span className="text-rose-400 font-bold">{totalProteinGoal}g</span>
+                <span className="text-slate-450">Protein Target</span>
+                <span className="text-rose-450 font-bold">{totalProteinGoal}g</span>
               </div>
               <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-900">
                 <div className="bg-rose-500 h-full rounded-full" style={{ width: "70%" }} />
@@ -255,7 +256,7 @@ export default function NutritionView({ profile }: NutritionViewProps) {
             {/* Carbs bar */}
             <div className="space-y-1">
               <div className="flex justify-between text-xs font-mono font-semibold">
-                <span className="text-slate-400">Carbohydrate Intake</span>
+                <span className="text-slate-450">Carbohydrate Intake</span>
                 <span className="text-amber-400 font-bold">{totalCarbsGoal}g</span>
               </div>
               <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-900">
@@ -266,8 +267,8 @@ export default function NutritionView({ profile }: NutritionViewProps) {
             {/* Fats bar */}
             <div className="space-y-1">
               <div className="flex justify-between text-xs font-mono font-semibold">
-                <span className="text-slate-400">Essential Fats</span>
-                <span className="text-cyan-400 font-bold">{totalFatGoal}g</span>
+                <span className="text-slate-450">Essential Fats</span>
+                <span className="text-cyan-450 font-bold">{totalFatGoal}g</span>
               </div>
               <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-900">
                 <div className="bg-cyan-400 h-full rounded-full" style={{ width: "50%" }} />
@@ -276,21 +277,21 @@ export default function NutritionView({ profile }: NutritionViewProps) {
           </div>
 
           {/* Water Intake log */}
-          <div className="bg-slate-950 p-3 rounded-2xl flex items-center justify-between border border-slate-900">
+          <div className="bg-slate-950 p-3.5 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between border border-slate-900 gap-3">
             <div>
-              <span className="text-[10px] text-slate-500 uppercase font-black block">Logged Hydration</span>
-              <span className="text-xs font-bold text-slate-300 font-mono">{loggedWaterMl} / {activePlan.summary.water} ml</span>
+              <span className="text-[10px] text-slate-500 uppercase font-black block tracking-wider">Logged Hydration</span>
+              <span className="text-xs font-black text-slate-250 font-mono mt-0.5 block">{loggedWaterMl} / {activePlan.summary.water} ml</span>
             </div>
-            <div className="flex gap-1.5">
+            <div className="flex gap-2">
               <button 
                 onClick={() => setLoggedWaterMl(prev => prev + 250)}
-                className="bg-slate-900 hover:bg-slate-850 text-lime-400 border border-slate-800 text-xs px-2.5 py-1.5 rounded-lg font-bold"
+                className="flex-1 sm:flex-none bg-slate-905 hover:bg-slate-850 text-lime-400 border border-slate-800 text-xs px-3 py-2 rounded-xl font-bold transition-all cursor-pointer text-center"
               >
                 +250ml
               </button>
               <button 
                 onClick={() => setLoggedWaterMl(prev => prev + 500)}
-                className="bg-slate-900 hover:bg-slate-850 text-cyan-400 border border-slate-800 text-xs px-2.5 py-1.5 rounded-lg font-bold"
+                className="flex-1 sm:flex-none bg-slate-905 hover:bg-slate-850 text-cyan-400 border border-slate-800 text-xs px-3 py-2 rounded-xl font-bold transition-all cursor-pointer text-center"
               >
                 +500ml
               </button>
@@ -300,9 +301,9 @@ export default function NutritionView({ profile }: NutritionViewProps) {
       </div>
 
       {/* MEALS DETAILS TIMELINE & SHOPPING CHECKS */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pb-6" id="meals-shopping-split">
-        {/* Left timeline structure - col-span-7 */}
-        <div className="lg:col-span-7 bg-[#121218] border border-slate-800 rounded-3xl p-5 space-y-4">
+      <div className={`grid gap-6 pb-6 ${isPhoneMode ? "grid-cols-1" : "grid-cols-1 lg:grid-cols-12"}`} id="meals-shopping-split">
+        {/* Left timeline structure */}
+        <div className={`${isPhoneMode ? "col-span-1" : "lg:col-span-7"} bg-[#121218] border border-slate-800 rounded-3xl p-5 space-y-4`}>
           <div className="flex justify-between items-center pb-2 border-b border-slate-900">
             <h4 className="font-bold text-white text-sm">{activePlan.title}</h4>
             <span className="text-[10px] uppercase font-black text-slate-500">Log Daily Intake</span>
@@ -375,8 +376,8 @@ export default function NutritionView({ profile }: NutritionViewProps) {
           </div>
         </div>
 
-        {/* Corresponding Auto-Generated Shopping List - col-span-5 */}
-        <div className="lg:col-span-5 bg-[#121218] border border-slate-800 rounded-3xl p-5 space-y-4">
+        {/* Corresponding Auto-Generated Shopping List */}
+        <div className={`${isPhoneMode ? "col-span-1" : "lg:col-span-5"} bg-[#121218] border border-slate-800 rounded-3xl p-5 space-y-4`}>
           <div className="flex justify-between items-center pb-2 border-b border-slate-900">
             <h4 className="font-bold text-white text-sm flex items-center gap-1.5">
               <ShoppingBag className="w-4 h-4 text-lime-400" />

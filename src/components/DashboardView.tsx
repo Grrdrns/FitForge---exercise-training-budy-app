@@ -13,6 +13,7 @@ interface DashboardViewProps {
   onNavigate: (tab: string) => void;
   completedLogsCount: number;
   weeklyXp: number;
+  isPhoneMode?: boolean;
 }
 
 export default function DashboardView({
@@ -21,7 +22,8 @@ export default function DashboardView({
   activeDayIndex,
   onNavigate,
   completedLogsCount,
-  weeklyXp
+  weeklyXp,
+  isPhoneMode = false
 }: DashboardViewProps) {
   // Safe calculation for XP levels
   const xpNeededForNextLevel = 1000;
@@ -45,29 +47,29 @@ export default function DashboardView({
   return (
     <div className="space-y-6" id="dashboard-container">
       {/* Dynamic Profile Welcome Banner */}
-      <div className="bg-gradient-to-r from-lime-900/40 via-slate-900 to-slate-950 p-6 rounded-3xl border border-lime-500/20 shadow-xl relative overflow-hidden" id="welcome-banner">
+      <div className="bg-gradient-to-r from-lime-900/40 via-slate-900 to-slate-950 p-4 sm:p-6 rounded-3xl border border-lime-500/20 shadow-xl relative overflow-hidden" id="welcome-banner">
         <div className="absolute top-0 right-0 w-80 h-80 bg-lime-400/5 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="bg-lime-400 text-black text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full">
+        <div className={`relative z-10 flex gap-5 ${isPhoneMode ? "flex-col" : "flex-col lg:flex-row lg:items-center"}`}>
+          <div className="space-y-1.5">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="bg-lime-400 text-black text-[9px] sm:text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full">
                 {profile.experienceLevel} ATHLETE
               </span>
-              <span className="text-xs text-slate-400 font-mono flex items-center gap-1">
+              <span className="text-[11px] text-slate-400 font-mono flex items-center gap-1.5">
                 <span className="h-1.5 w-1.5 rounded-full bg-lime-400 animate-ping"></span>
                 Coach Feedback: Active & Adapting
               </span>
             </div>
-            <h2 className="text-3xl font-black text-white tracking-tight pt-1">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white tracking-tight pt-1">
               Welcome back, <span className="text-lime-400 font-serif italic">{profile.name}</span>!
             </h2>
-            <p className="text-sm text-slate-400 max-w-lg">
+            <p className="text-xs sm:text-sm text-slate-400 max-w-lg leading-relaxed">
               The AI Engine analyzed your session completion. Your muscular endurance suggests raising dumbbells setup by 1.5kg this week.
             </p>
           </div>
 
           {/* XP & LEVEL CARRIER */}
-          <div className="bg-slate-950/80 border border-slate-800 p-4 rounded-2xl min-w-[200px] space-y-2">
+          <div className="bg-slate-950/80 border border-slate-800 p-4 rounded-2xl w-full lg:w-auto lg:min-w-[220px] space-y-2">
             <div className="flex justify-between items-center text-xs">
               <span className="text-slate-400 font-bold">Level {profile.level}</span>
               <span className="text-lime-400 font-mono font-bold">{profile.xp} XP</span>
@@ -78,7 +80,7 @@ export default function DashboardView({
                 style={{ width: `${xpProgressPercent}%` }}
               />
             </div>
-            <div className="flex justify-between items-center text-[10px] text-slate-500">
+            <div className="flex justify-between items-center text-[9px] sm:text-[10px] text-slate-500">
               <span>Beginner (Lvl 1)</span>
               <span>{xpNeededForNextLevel - (profile.xp % xpNeededForNextLevel)} XP to Level {profile.level + 1}</span>
             </div>
@@ -87,62 +89,62 @@ export default function DashboardView({
       </div>
 
       {/* CORE PERFORMANCE ANALYTICS */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4" id="stats-grid">
-        <div className="bg-[#121218] border border-slate-800 p-4 rounded-2xl flex flex-col justify-between hover:border-slate-700 transition-all">
-          <div className="flex justify-between items-center text-slate-500 text-xs uppercase font-bold tracking-wider">
-            <span>Active Calories</span>
-            <Flame className="w-4 h-4 text-orange-500" />
+      <div className={`grid gap-3 sm:gap-4 ${isPhoneMode ? "grid-cols-2" : "grid-cols-2 md:grid-cols-4"}`} id="stats-grid">
+        <div className="bg-[#121218] border border-slate-800 p-3.5 sm:p-4 rounded-2xl flex flex-col justify-between hover:border-slate-700 transition-all">
+          <div className="flex justify-between items-center text-slate-500 text-[10px] sm:text-xs uppercase font-extrabold tracking-wider gap-1">
+            <span>Calories</span>
+            <Flame className="w-3.5 h-3.5 text-orange-500 shrink-0" />
           </div>
-          <div className="mt-2">
-            <span className="text-2xl font-black text-white italic">
+          <div className="mt-1.5">
+            <span className="text-lg sm:text-2xl font-black text-white italic">
               {completedLogsCount * 320 || 1240}
             </span>
-            <span className="text-xs text-slate-500 uppercase ml-1">kcal</span>
+            <span className="text-[10px] sm:text-xs text-slate-500 uppercase ml-1">kcal</span>
           </div>
-          <p className="text-[10px] text-lime-400 mt-1 font-semibold">Total physical burn logged</p>
+          <p className="text-[9px] sm:text-[10px] text-lime-400 mt-1 font-semibold truncate">Burn index logged</p>
         </div>
 
-        <div className="bg-[#121218] border border-slate-800 p-4 rounded-2xl flex flex-col justify-between hover:border-slate-700 transition-all">
-          <div className="flex justify-between items-center text-slate-500 text-xs uppercase font-bold tracking-wider">
-            <span>Logged Workouts</span>
-            <Dumbbell className="w-4 h-4 text-lime-400" />
+        <div className="bg-[#121218] border border-slate-800 p-3.5 sm:p-4 rounded-2xl flex flex-col justify-between hover:border-slate-700 transition-all">
+          <div className="flex justify-between items-center text-slate-500 text-[10px] sm:text-xs uppercase font-extrabold tracking-wider gap-1">
+            <span>Workouts</span>
+            <Dumbbell className="w-3.5 h-3.5 text-lime-400 shrink-0" />
           </div>
-          <div className="mt-2">
-            <span className="text-2xl font-black text-white italic">
+          <div className="mt-1.5">
+            <span className="text-lg sm:text-2xl font-black text-white italic">
               {completedLogsCount || 4}
             </span>
-            <span className="text-xs text-slate-500 uppercase ml-1">sessions</span>
+            <span className="text-[10px] sm:text-xs text-slate-500 uppercase ml-1">sessions</span>
           </div>
-          <p className="text-[10px] text-slate-400 mt-1">Goal: {profile.frequency} days / week</p>
+          <p className="text-[9px] sm:text-[10px] text-slate-400 mt-1 truncate">Goal: {profile.frequency} days/wk</p>
         </div>
 
-        <div className="bg-[#121218] border border-slate-800 p-4 rounded-2xl flex flex-col justify-between hover:border-slate-700 transition-all font-sans">
-          <div className="flex justify-between items-center text-slate-500 text-xs uppercase font-bold tracking-wider">
-            <span>Streak Force</span>
-            <Zap className="w-4 h-4 text-amber-500" />
+        <div className="bg-[#121218] border border-slate-800 p-3.5 sm:p-4 rounded-2xl flex flex-col justify-between hover:border-slate-700 transition-all font-sans">
+          <div className="flex justify-between items-center text-slate-500 text-[10px] sm:text-xs uppercase font-extrabold tracking-wider gap-1">
+            <span>Streak</span>
+            <Zap className="w-3.5 h-3.5 text-amber-500 shrink-0" />
           </div>
-          <div className="mt-2">
-            <span className="text-2xl font-black text-white italic">7</span>
-            <span className="text-xs text-slate-400 ml-1">days</span>
+          <div className="mt-1.5">
+            <span className="text-lg sm:text-2xl font-black text-white italic">7</span>
+            <span className="text-[10px] sm:text-xs text-slate-450 ml-1">days</span>
           </div>
-          <p className="text-[10px] text-amber-400 mt-1">Weekly Shield Active</p>
+          <p className="text-[9px] sm:text-[10px] text-amber-400 mt-1 truncate">Active Shield</p>
         </div>
 
-        <div className="bg-[#121218] border border-slate-800 p-4 rounded-2xl flex flex-col justify-between hover:border-slate-700 transition-all">
-          <div className="flex justify-between items-center text-slate-500 text-xs uppercase font-bold tracking-wider">
-            <span>Recovery Ready</span>
-            <Heart className="w-4 h-4 text-pink-500" />
+        <div className="bg-[#121218] border border-slate-800 p-3.5 sm:p-4 rounded-2xl flex flex-col justify-between hover:border-slate-700 transition-all">
+          <div className="flex justify-between items-center text-slate-500 text-[10px] sm:text-xs uppercase font-extrabold tracking-wider gap-1">
+            <span>Recovery</span>
+            <Heart className="w-3.5 h-3.5 text-pink-500 shrink-0" />
           </div>
-          <div className="mt-2">
-            <span className="text-2xl font-black text-white italic">{recoveryScore}</span>
-            <span className="text-xs text-slate-500 font-mono font-bold">/100</span>
+          <div className="mt-1.5">
+            <span className="text-lg sm:text-2xl font-black text-white italic">{recoveryScore}</span>
+            <span className="text-[10px] sm:text-xs text-slate-500 font-mono font-bold">/100</span>
           </div>
-          <p className="text-[10px] text-lime-400 mt-1">Excellent sleep reported</p>
+          <p className="text-[9px] sm:text-[10px] text-lime-400 mt-1 truncate">Excellent sleep</p>
         </div>
       </div>
 
       {/* TWO-COLUMN GRID: WORKOUT HERO & MOTIVATIONAL PREVIEW */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6" id="dashboard-split">
+      <div className={`grid gap-6 ${isPhoneMode ? "grid-cols-1" : "grid-cols-1 lg:grid-cols-12"}`} id="dashboard-split">
         {/* Left Side: Active Workout Day Target (Big Block) */}
         <div className="lg:col-span-8 bg-[#181820] border border-slate-800 rounded-3xl p-6 relative overflow-hidden flex flex-col justify-between group">
           <div className="absolute top-0 right-0 w-96 h-96 bg-lime-400/5 rounded-full blur-3xl pointer-events-none group-hover:bg-lime-400/10 transition-all duration-300" />
@@ -239,34 +241,34 @@ export default function DashboardView({
       </div>
 
       {/* METABOLIC COUPLING ADVICE & COMMUNITY BANNER */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 pb-6">
+      <div className={`grid gap-6 pb-6 ${isPhoneMode ? "grid-cols-1" : "grid-cols-1 md:grid-cols-12"}`}>
         {/* Quick Nutrition compliance view */}
-        <div className="md:col-span-7 bg-[#121218] border border-slate-800 p-5 rounded-2xl flex flex-col justify-between">
-          <div className="flex justify-between items-center mb-3">
+        <div className={`${isPhoneMode ? "col-span-1" : "md:col-span-12 lg:col-span-7"} bg-[#121218] border border-slate-800 p-5 rounded-2xl flex flex-col justify-between`}>
+          <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-3 gap-1">
             <h4 className="text-xs font-black uppercase text-slate-400 tracking-wider">Dynamic Nutrition Coupling</h4>
-            <span className="text-[10px] text-lime-400 underline cursor-pointer" onClick={() => onNavigate("nutrition")}>Custom Planner</span>
+            <span className="text-[10px] text-lime-400 underline cursor-pointer hover:text-lime-300 self-start sm:self-auto" onClick={() => onNavigate("nutrition")}>Custom Planner</span>
           </div>
-          <p className="text-xs text-slate-400 mb-4">
+          <p className="text-xs text-slate-400 mb-4 leading-relaxed">
             To fuel your <span className="text-white font-bold">{profile.goal}</span> program, keep your meals high in clean sources.
           </p>
           <div className="grid grid-cols-3 gap-2">
-            <div className="bg-slate-900/60 p-2.5 rounded-xl text-center border border-slate-800">
-              <span className="block text-[9px] uppercase text-slate-500 font-bold">Protein Cap</span>
-              <span className="text-sm font-black text-rose-400 font-mono">{Math.round(profile.weight * 2)}g</span>
+            <div className="bg-slate-900/60 p-2 sm:p-2.5 rounded-xl text-center border border-slate-850 flex flex-col justify-center">
+              <span className="block text-[8px] sm:text-[9px] uppercase text-slate-500 font-extrabold truncate">Protein</span>
+              <span className="text-xs sm:text-sm font-black text-rose-400 font-mono mt-0.5">{Math.round(profile.weight * 2)}g</span>
             </div>
-            <div className="bg-slate-900/60 p-2.5 rounded-xl text-center border border-slate-800">
-              <span className="block text-[9px] uppercase text-slate-500 font-bold">Target Calories</span>
-              <span className="text-sm font-black text-amber-400 font-mono">{profile.goal.includes("Lose") ? "1,800" : "2,500"}</span>
+            <div className="bg-slate-900/60 p-2 sm:p-2.5 rounded-xl text-center border border-slate-850 flex flex-col justify-center">
+              <span className="block text-[8px] sm:text-[9px] uppercase text-slate-500 font-extrabold truncate">Goal Cals</span>
+              <span className="text-xs sm:text-sm font-black text-amber-400 font-mono mt-0.5">{profile.goal.includes("Lose") ? "1,800" : "2,500"}</span>
             </div>
-            <div className="bg-slate-900/60 p-2.5 rounded-xl text-center border border-slate-800">
-              <span className="block text-[9px] uppercase text-slate-500 font-bold">Daily Hydration</span>
-              <span className="text-sm font-black text-cyan-400 font-mono">2.8L</span>
+            <div className="bg-slate-900/60 p-2 sm:p-2.5 rounded-xl text-center border border-slate-850 flex flex-col justify-center">
+              <span className="block text-[8px] sm:text-[9px] uppercase text-slate-500 font-extrabold truncate">Water</span>
+              <span className="text-xs sm:text-sm font-black text-cyan-400 font-mono mt-0.5">2.8L</span>
             </div>
           </div>
         </div>
 
         {/* Motivational Prompt Spark */}
-        <div className="md:col-span-5 bg-gradient-to-tr from-[#121218] to-slate-950 border border-slate-800 p-5 rounded-2xl flex items-center gap-4">
+        <div className={`${isPhoneMode ? "col-span-1" : "md:col-span-12 lg:col-span-5"} bg-gradient-to-tr from-[#121218] to-slate-950 border border-slate-800 p-5 rounded-2xl flex items-center gap-4`}>
           <div className="w-12 h-12 rounded-xl bg-lime-400/10 border border-lime-400/20 flex flex-shrink-0 items-center justify-center text-lime-400">
             <Compass className="w-6 h-6" />
           </div>

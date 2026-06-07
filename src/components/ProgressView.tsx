@@ -12,9 +12,10 @@ import {
 interface ProgressViewProps {
   profile: UserProfile;
   onChangeWeight: (newWeight: number) => void;
+  isPhoneMode?: boolean;
 }
 
-export default function ProgressView({ profile, onChangeWeight }: ProgressViewProps) {
+export default function ProgressView({ profile, onChangeWeight, isPhoneMode = false }: ProgressViewProps) {
   // Local states for new logs
   const [loggedWeight, setLoggedWeight] = useState<string>("");
   const [loggedBodyFat, setLoggedBodyFat] = useState<string>("15");
@@ -76,9 +77,9 @@ export default function ProgressView({ profile, onChangeWeight }: ProgressViewPr
       </div>
 
       {/* Grid of Interactive Input and Overview */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Input box to capture morning metrics - col-span-4 */}
-        <div className="lg:col-span-4 bg-[#121218] border border-slate-800 rounded-3xl p-5 flex flex-col justify-between">
+      <div className={`grid gap-6 ${isPhoneMode ? "grid-cols-1" : "grid-cols-1 lg:grid-cols-12"}`}>
+        {/* Input box to capture morning metrics */}
+        <div className={`${isPhoneMode ? "col-span-1" : "lg:col-span-4"} bg-[#121218] border border-slate-800 rounded-3xl p-5 flex flex-col justify-between`}>
           <div className="space-y-3">
             <h3 className="font-bold text-white text-sm flex items-center gap-1.5 pb-2 border-b border-slate-900">
               <Scale className="w-4 h-4 text-lime-400" /> Log Morning Metrics
@@ -145,8 +146,8 @@ export default function ProgressView({ profile, onChangeWeight }: ProgressViewPr
           </div>
         </div>
 
-        {/* RECHARTS PLOTS: Weight Trend Area - col-span-8 */}
-        <div className="lg:col-span-8 bg-[#121218] border border-slate-800 rounded-3xl p-5 space-y-4">
+        {/* RECHARTS PLOTS: Weight Trend Area */}
+        <div className={`${isPhoneMode ? "col-span-1" : "lg:col-span-8"} bg-[#121218] border border-slate-800 rounded-3xl p-5 space-y-4`}>
           <div className="flex justify-between items-center">
             <span className="text-xs uppercase font-extrabold text-slate-400 tracking-wide">COMPREHENSIVE PROGRESS METER</span>
             <span className="text-lime-400 font-mono text-[10px] uppercase font-bold flex items-center gap-1">
@@ -182,7 +183,7 @@ export default function ProgressView({ profile, onChangeWeight }: ProgressViewPr
       </div>
 
       {/* LOWER ROW: STRENGTH METRICS BAR GRAPH */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6">
+      <div className={`grid gap-6 pb-6 ${isPhoneMode ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2"}`}>
         <div className="bg-[#121218] border border-slate-800 rounded-3xl p-5 space-y-4">
           <div>
             <h4 className="font-bold text-white text-sm">Strength Limit Indicators</h4>
@@ -212,18 +213,18 @@ export default function ProgressView({ profile, onChangeWeight }: ProgressViewPr
             </p>
           </div>
 
-          <div className="grid grid-cols-3 gap-2">
-            <div className="bg-slate-950 p-2 text-center rounded-xl border border-slate-900">
-              <span className="block text-[8px] uppercase text-slate-500 font-bold">Base BMR</span>
-              <span className="text-xs font-mono font-bold text-white">1,620 kcal</span>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <div className="bg-slate-950 p-2.5 text-center rounded-xl border border-slate-900 flex flex-col justify-center">
+              <span className="block text-[9px] uppercase text-slate-500 font-extrabold tracking-wider">Base BMR</span>
+              <span className="text-xs font-mono font-bold text-white mt-1">1,620 kcal</span>
             </div>
-            <div className="bg-slate-950 p-2 text-center rounded-xl border border-slate-900">
-              <span className="block text-[8px] uppercase text-slate-500 font-bold">Total Burn</span>
-              <span className="text-xs font-mono font-bold text-lime-400">+2,250 kcal</span>
+            <div className="bg-slate-950 p-2.5 text-center rounded-xl border border-slate-900 flex flex-col justify-center">
+              <span className="block text-[9px] uppercase text-slate-500 font-extrabold tracking-wider">Total Burn</span>
+              <span className="text-xs font-mono font-bold text-lime-400 mt-1">+2,250 kcal</span>
             </div>
-            <div className="bg-slate-950 p-2 text-center rounded-xl border border-slate-900">
-              <span className="block text-[8px] uppercase text-slate-500 font-bold">Goal State</span>
-              <span className="text-xs font-bold text-white leading-tight">Anabolic</span>
+            <div className="bg-slate-950 p-2.5 text-center rounded-xl border border-slate-900 flex flex-col justify-center">
+              <span className="block text-[9px] uppercase text-slate-500 font-extrabold tracking-wider">Goal State</span>
+              <span className="text-xs font-semibold text-white mt-1">Anabolic</span>
             </div>
           </div>
 

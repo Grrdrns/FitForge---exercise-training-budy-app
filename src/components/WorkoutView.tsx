@@ -13,6 +13,7 @@ interface WorkoutViewProps {
   onCompleteWorkout: (caloriesBurned: number, logDetails: string) => void;
   onModifyProgramDifficulty: (scale: "increase" | "decrease") => void;
   onSwitchDay: (index: number) => void;
+  isPhoneMode?: boolean;
 }
 
 export default function WorkoutView({
@@ -22,7 +23,8 @@ export default function WorkoutView({
   exercisesList,
   onCompleteWorkout,
   onModifyProgramDifficulty,
-  onSwitchDay
+  onSwitchDay,
+  isPhoneMode = false
 }: WorkoutViewProps) {
   const [selectedExerciseId, setSelectedExerciseId] = useState<string | null>(null);
   const [exerciseStatus, setExerciseStatus] = useState<Record<string, boolean>>({});
@@ -121,9 +123,9 @@ export default function WorkoutView({
       </div>
 
       {program ? (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Main Workout Panel: col-span-8 */}
-          <div className="lg:col-span-8 space-y-4">
+        <div className={`grid gap-6 ${isPhoneMode ? "grid-cols-1" : "grid-cols-1 lg:grid-cols-12"}`}>
+          {/* Main Workout Panel */}
+          <div className={`${isPhoneMode ? "col-span-1" : "lg:col-span-8"} space-y-4`}>
             <div className="bg-[#121218] border border-slate-800 rounded-3xl p-5 sm:p-6 space-y-4 relative overflow-hidden">
               <div className="flex justify-between items-center pb-4 border-b border-slate-900">
                 <div>
@@ -288,8 +290,8 @@ export default function WorkoutView({
             </div>
           </div>
 
-          {/* AI Adaptive Feedback Side Control Panel: col-span-4 */}
-          <div className="lg:col-span-4 space-y-4">
+          {/* AI Adaptive Feedback Side Control Panel */}
+          <div className={`${isPhoneMode ? "col-span-1" : "lg:col-span-4"} space-y-4`}>
             <div className="bg-[#121218] border border-slate-800 rounded-3xl p-5 space-y-4">
               <h4 className="font-bold text-white text-sm flex items-center gap-1.5">
                 <Sparkles className="w-4 h-4 text-lime-400" /> AI Pacing & Adaptive Load

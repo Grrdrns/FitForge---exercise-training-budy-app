@@ -3,6 +3,7 @@ import { Sparkles, RefreshCw, Upload, Eye, EyeOff, AlertTriangle, ShieldCheck } 
 
 interface FormAnalyzerViewProps {
   onEarnXp: (amount: number) => void;
+  isPhoneMode?: boolean;
 }
 
 interface FormFeedback {
@@ -12,7 +13,7 @@ interface FormFeedback {
   correctionsInstructions: string[];
 }
 
-export default function FormAnalyzerView({ onEarnXp }: FormAnalyzerViewProps) {
+export default function FormAnalyzerView({ onEarnXp, isPhoneMode = false }: FormAnalyzerViewProps) {
   const [exerciseName, setExerciseName] = useState("Standard Push-Up");
   const [observationNotes, setObservationNotes] = useState("My elbows felt flared out on sets 3.");
   const [loading, setLoading] = useState(false);
@@ -72,15 +73,15 @@ export default function FormAnalyzerView({ onEarnXp }: FormAnalyzerViewProps) {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Interactive Lens Controller - col-span-7 */}
-        <div className="lg:col-span-7 bg-[#121218] border border-slate-800 rounded-3xl p-5 sm:p-6 space-y-5">
+      <div className={`grid gap-6 ${isPhoneMode ? "grid-cols-1" : "grid-cols-1 lg:grid-cols-12"}`}>
+        {/* Left Interactive Lens Controller */}
+        <div className={`${isPhoneMode ? "col-span-1" : "lg:col-span-7"} bg-[#121218] border border-slate-800 rounded-3xl p-5 sm:p-6 space-y-5`}>
           <div className="flex justify-between items-center pb-2 border-b border-slate-900">
             <h3 className="font-bold text-white text-xs uppercase tracking-wider">AI Computer-Vision Lab</h3>
             <span className="text-[10px] text-lime-400 font-mono">Frame Analysis Ready</span>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className={`grid gap-3 ${isPhoneMode ? "grid-cols-1" : "grid-cols-2"}`}>
             <div className="space-y-1.5">
               <span className="text-[10px] text-slate-500 uppercase font-black block">Motion Variant Target</span>
               <input 
@@ -175,8 +176,8 @@ export default function FormAnalyzerView({ onEarnXp }: FormAnalyzerViewProps) {
           </button>
         </div>
 
-        {/* Right Feedback Column: col-span-5 */}
-        <div className="lg:col-span-5">
+        {/* Right Feedback Column */}
+        <div className={isPhoneMode ? "col-span-1" : "lg:col-span-5"}>
           {feedback ? (
             <div className="bg-[#121218] border border-slate-800 rounded-3xl p-5 space-y-5 animate-fadeIn">
               <div className="flex justify-between items-center pb-2 border-b border-slate-900">

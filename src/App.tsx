@@ -213,6 +213,7 @@ export default function App() {
             onNavigate={(tab) => setActiveTab(tab)}
             completedLogsCount={completedLogsCount}
             weeklyXp={weeklyXp}
+            isPhoneMode={viewMode === "phone"}
           />
         );
       case "workout":
@@ -227,17 +228,19 @@ export default function App() {
               console.log(`Adapting active difficulties to: ${scale}`);
             }}
             onSwitchDay={(idx) => setActiveDayIndex(idx)}
+            isPhoneMode={viewMode === "phone"}
           />
         );
       case "exerciseLibrary":
         return <ExerciseLibraryView exercisesList={exercisePool} />;
       case "nutrition":
-        return <NutritionView profile={profile} />;
+        return <NutritionView profile={profile} isPhoneMode={viewMode === "phone"} />;
       case "progress":
         return (
           <ProgressView 
             profile={profile} 
             onChangeWeight={(newW) => setProfile(prev => ({ ...prev, weight: newW }))} 
+            isPhoneMode={viewMode === "phone"}
           />
         );
       case "aiCoach":
@@ -250,7 +253,7 @@ export default function App() {
           />
         );
       case "formVision":
-        return <FormAnalyzerView onEarnXp={handleEarnXp} />;
+        return <FormAnalyzerView onEarnXp={handleEarnXp} isPhoneMode={viewMode === "phone"} />;
       case "challenges":
         return (
           <ChallengesView
