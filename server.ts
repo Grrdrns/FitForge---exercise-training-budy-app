@@ -306,6 +306,112 @@ app.post("/api/coach/nutrition-plan", async (req, res) => {
   });
 });
 
+// 2.5 AI Image Meal Analyzer (Multimodal vision for meal photography)
+app.post("/api/coach/analyze-meal-image", async (req, res) => {
+  const { imageBase64, mockTemplateId } = req.body;
+
+  // Pre-compiled highly realistic food metrics for template-based fallback and mock triggers
+  const HEALTHY_MEALS_PRESETS: Record<string, any> = {
+    salmon: {
+      mealName: "Sesame Crusted Salmon Bowl",
+      calories: 520,
+      protein: 38,
+      carbs: 42,
+      fat: 22,
+      confidenceScore: 94,
+      benefits: "High in rich omega-3 fatty acids, promoting visual recovery, joint preservation, and long-lasting muscular synthesis.",
+      dietaryFit: "High-Protein / Healthy Fats"
+    },
+    avocado: {
+      mealName: "Avocado & Poached Egg Protein Toast",
+      calories: 360,
+      protein: 16,
+      carbs: 28,
+      fat: 18,
+      confidenceScore: 91,
+      benefits: "Rich in monosaturated fats and complete egg-based trace elements to provide steady, slow-releasing energy levels.",
+      dietaryFit: "Clean Energy / Low-GI"
+    },
+    chicken: {
+      mealName: "Searing Grilled Chicken & Asparagus Platter",
+      calories: 450,
+      protein: 48,
+      carbs: 32,
+      fat: 11,
+      confidenceScore: 97,
+      benefits: "Extremely lean, optimized purely as a high-density reconstructive protein tool to feed muscular microtears post-workout.",
+      dietaryFit: "Lean-Bulking / High-Volume Cut"
+    }
+  };
+
+  // If a template ID was selected and API KEY is key fallback, serve mock instantly
+  if (mockTemplateId && HEALTHY_MEALS_PRESETS[mockTemplateId] && (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === "MY_GEMINI_API_KEY")) {
+    res.json({ success: true, ...HEALTHY_MEALS_PRESETS[mockTemplateId] });
+    return;
+  }
+
+  if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== "MY_GEMINI_API_KEY") {
+    try {
+      const ai = getAI();
+      const prompt = `You are the FITFORGE AI Smart Nutritionist. Analyze the following meal image.
+      Provide an expert, scientifically accurate assessment of the meal including approximate calories (in kcal), protein (in grams), carbs (in grams), and fat (in grams). 
+      Also provide its name/type, a confidence rating out of 100 on your visual assessment, 1-2 motivating sentences explaining why this meal is beneficial to standard athletic fitness levels, and a dietary archetype classification (e.g. "Keto Friendly", "Balanced Clean Eats", "High Protein Lean Boost").
+      Respond in strict JSON matching the required schema. Ensure values are integers where required.`;
+
+      // Decode the raw base64 data to discard metadata if any
+      let rawBase64 = imageBase64 || "";
+      let mimeType = "image/jpeg";
+      if (rawBase64.startsWith("data:")) {
+        const parts = rawBase64.split(";base64,");
+        mimeType = parts[0].split(":")[1] || "image/jpeg";
+        rawBase64 = parts[1];
+      }
+
+      const imagePart = {
+        inlineData: {
+          mimeType: mimeType,
+          data: rawBase64,
+        },
+      };
+
+      const response = await ai.models.generateContent({
+        model: "gemini-3.5-flash",
+        contents: { parts: [imagePart, { text: prompt }] },
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              mealName: { type: Type.STRING },
+              calories: { type: Type.INTEGER, description: "Approximate calories in kcal" },
+              protein: { type: Type.INTEGER, description: "Protein content in grams" },
+              carbs: { type: Type.INTEGER, description: "Carbohydrate content in grams" },
+              fat: { type: Type.INTEGER, description: "Fat content in grams" },
+              confidenceScore: { type: Type.INTEGER, description: "AI confidence score from 1 to 100" },
+              benefits: { type: Type.STRING, description: "1-2 sentences on why this meal benefits standard sports recovery" },
+              dietaryFit: { type: Type.STRING, description: "Diet archetype label like High-Protein, Keto, Clean-Bulk" }
+            },
+            required: ["mealName", "calories", "protein", "carbs", "fat", "confidenceScore", "benefits", "dietaryFit"]
+          }
+        }
+      });
+
+      const report = JSON.parse(response.text.trim());
+      res.json({ success: true, ...report });
+      return;
+    } catch (err) {
+      console.error("Gemini Meal Multimodal Analyzer Error:", err);
+    }
+  }
+
+  // Robust dynamic fallback in case of no internet or missing client secret keys
+  const randomPresets = ["salmon", "avocado", "chicken"];
+  const randomKey = mockTemplateId || randomPresets[Math.floor(Math.random() * randomPresets.length)];
+  const fallback = HEALTHY_MEALS_PRESETS[randomKey] || HEALTHY_MEALS_PRESETS.chicken;
+
+  res.json({ success: true, ...fallback, simulated: true });
+});
+
 // 3. AI Pose Form Checker (Simulated Frame evaluation + Optional Gemini text feedback)
 app.post("/api/coach/analyze-form", async (req, res) => {
   const { exerciseName, observationNotes } = req.body;
