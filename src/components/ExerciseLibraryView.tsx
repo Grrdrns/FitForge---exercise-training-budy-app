@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { Exercise, Equipment, ExperienceLevel } from "../types";
 import { Search, Dumbbell, Sparkles, Filter, ChevronRight } from "lucide-react";
+import ExerciseMotionVisualizer from "./ExerciseMotionVisualizer";
 
 interface ExerciseLibraryViewProps {
   exercisesList: Exercise[];
@@ -181,14 +182,10 @@ export default function ExerciseLibraryView({ exercisesList }: ExerciseLibraryVi
                 </div>
               </div>
 
-              {/* Animated graphical box replacing Video / Image Demo */}
-              <div className="bg-slate-950 rounded-2xl p-6 h-48 relative overflow-hidden flex items-center justify-center border border-slate-900">
-                <div className={`absolute w-32 h-32 rounded-full filter blur-2xl opacity-20 animate-pulse bg-gradient-to-tr ${activeExercise.imageDemoClassName || "from-teal-500 to-indigo-500"}`} />
-                <div className="relative z-10 flex flex-col items-center justify-center text-center space-y-2">
-                  <Dumbbell className="w-10 h-10 text-lime-400 animate-bounce" />
-                  <span className="text-[11px] text-slate-400 font-mono tracking-widest uppercase">FitForge Interactive Biomechanics Map</span>
-                  <span className="text-[9px] text-slate-600 uppercase">Correct range of motion: 2s hold contraction, 3s negative release</span>
-                </div>
+              {/* Live joint motion simulator guided visualization */}
+              <div className="space-y-1.5">
+                <span className="text-[10px] text-lime-400 uppercase font-black tracking-widest block">Interactive Live Biomechanics Demo</span>
+                <ExerciseMotionVisualizer exercise={activeExercise} />
               </div>
 
               {/* Steps Instructions */}

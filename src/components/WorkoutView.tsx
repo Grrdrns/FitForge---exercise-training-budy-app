@@ -4,6 +4,7 @@ import {
   Dumbbell, CheckCircle2, Circle, Clock, Flame, Play,
   ChevronDown, ChevronUp, RefreshCw, Sparkles, AlertCircle, Info, ArrowUpRight
 } from "lucide-react";
+import ExerciseMotionVisualizer, { getExerciseThumbnail } from "./ExerciseMotionVisualizer";
 
 interface WorkoutViewProps {
   profile: UserProfile;
@@ -171,10 +172,14 @@ export default function WorkoutView({
                       }`}
                     >
                       {/* Exercise Header Line */}
-                      <div className="p-4 flex items-center justify-between gap-4">
+                      <div 
+                        onClick={() => setSelectedExerciseId(isSelected ? null : item.exerciseId)}
+                        className="p-4 flex items-center justify-between gap-4 cursor-pointer select-none hover:bg-slate-900/40 transition-all group duration-200"
+                      >
                         <div className="flex items-center gap-3">
                           <button
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation();
                               if (workoutStarted) {
                                 toggleExercise(item.exerciseId);
                               }
@@ -182,7 +187,7 @@ export default function WorkoutView({
                             disabled={!workoutStarted}
                             className={`p-1 rounded-full transition-colors ${
                               !workoutStarted 
-                                ? "text-slate-700 cursor-not-allowed" 
+                                ? "text-slate-700 cursor-not-allowed text-xs" 
                                 : isCompleted 
                                   ? "text-emerald-400 hover:text-emerald-300" 
                                   : "text-slate-500 hover:text-slate-300"
@@ -195,16 +200,27 @@ export default function WorkoutView({
                             )}
                           </button>
 
+                          {/* Exercise Thumbnail Preview Card */}
+                          <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-slate-800 bg-slate-950 flex-shrink-0 flex items-center justify-center">
+                            <img 
+                              src={getExerciseThumbnail(refExercise.id, refExercise.name)} 
+                              alt={refExercise.name} 
+                              referrerPolicy="no-referrer"
+                              className="w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-300"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent" />
+                            <span className="absolute bottom-1 right-1 text-[7px] text-lime-400 font-bold tracking-widest bg-slate-950/90 px-1 py-0.5 rounded uppercase border border-slate-900">
+                              GUIDE
+                            </span>
+                          </div>
+
                           <div>
-                            <p className="text-sm font-bold text-white flex items-center gap-2">
+                            <p className="text-sm font-bold text-white flex items-center gap-2 flex-wrap">
                               {refExercise.name}
-                              <button 
-                                onClick={() => setSelectedExerciseId(isSelected ? null : item.exerciseId)}
-                                className="text-slate-500 hover:text-slate-300 p-0.5"
-                                title="Learn details"
-                              >
-                                <Info className="w-3.5 h-3.5 text-lime-400" />
-                              </button>
+                              <span className="text-[9px] bg-lime-450/15 text-lime-400 border border-lime-450/30 py-0.5 px-2 rounded-full font-bold uppercase tracking-wider animate-pulse flex items-center gap-0.5">
+                                <Info className="w-2.5 h-2.5 text-lime-400" />
+                                {isSelected ? "Hide Guide" : "See form"}
+                              </span>
                             </p>
                             <span className="text-xs text-slate-400 font-mono">
                               {item.sets} Sets &times; {item.reps}
@@ -214,13 +230,13 @@ export default function WorkoutView({
 
                         {/* Weight input logger */}
                         {workoutStarted && (
-                          <div className="flex items-center gap-1.5">
+                          <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
                             <input 
                               type="number" 
                               placeholder="Weight" 
                               value={weightLogs[item.exerciseId] || ""}
                               onChange={(e) => handleWeightChange(item.exerciseId, parseFloat(e.target.value) || 0)}
-                              className="w-16 bg-slate-950 border border-slate-800 rounded-lg text-center font-mono py-1 text-xs text-lime-400 focus:outline-none"
+                              className="w-16 bg-slate-950 border border-slate-850 rounded-lg text-center font-mono py-1 text-xs text-lime-400 focus:outline-none"
                             />
                             <span className="text-[10px] text-slate-500 uppercase font-bold">kg</span>
                           </div>
@@ -229,42 +245,53 @@ export default function WorkoutView({
 
                       {/* Expandable How-To & mistakes details to teach correct form */}
                       {isSelected && (
-                        <div className="bg-slate-950/60 p-4 border-t border-slate-900 text-xs text-slate-300 space-y-3">
-                          <div>
-                            <span className="text-[10px] text-lime-400 uppercase font-black tracking-widest block mb-1">Target Area</span>
-                            <span className="text-slate-400 text-xs">{refExercise.targetMuscle.join(", ")}</span>
-                          </div>
-                          
-                          <div>
-                            <span className="text-[10px] text-lime-400 uppercase font-black tracking-widest block mb-1">Execution Steps</span>
-                            <ol className="list-decimal list-inside space-y-1 text-slate-300">
-                              {refExercise.instructions.map((stepStr, sIdx) => (
-                                <li key={sIdx}>{stepStr}</li>
-                              ))}
-                            </ol>
-                          </div>
-
-                          <div>
-                            <span className="text-[10px] text-orange-400 uppercase font-black tracking-widest block mb-1">Common Pitfalls to Avoid</span>
-                            <ul className="list-disc list-inside space-y-1 text-slate-400">
-                              {refExercise.commonMistakes.map((mistake, mIdx) => (
-                                <li key={mIdx}>{mistake}</li>
-                              ))}
-                            </ul>
-                          </div>
-
-                          {refExercise.alternatives && refExercise.alternatives.length > 0 && (
+                        <div className="bg-slate-950/60 p-4 border-t border-slate-900 text-xs text-slate-300">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            {/* Visual Simulator Column */}
                             <div>
-                              <span className="text-[10px] text-slate-400 uppercase font-bold block mb-1">Alternative Movements</span>
-                              <div className="flex gap-1">
-                                {refExercise.alternatives.map((alt, aIdx) => (
-                                  <span key={aIdx} className="bg-slate-900 rounded px-2 py-0.5 text-slate-400 text-[10px]">
-                                    {alt}
-                                  </span>
-                                ))}
-                              </div>
+                              <span className="text-[10px] text-lime-400 uppercase font-black tracking-widest block mb-2">Live Guide & Form Simulator</span>
+                              <ExerciseMotionVisualizer exercise={refExercise} />
                             </div>
-                          )}
+
+                            {/* Informational Guidelines Column */}
+                            <div className="space-y-3.5">
+                              <div>
+                                <span className="text-[10px] text-lime-400 uppercase font-black tracking-widest block mb-1">Target Area</span>
+                                <span className="text-slate-400 text-xs">{refExercise.targetMuscle.join(", ")}</span>
+                              </div>
+                              
+                              <div>
+                                <span className="text-[10px] text-lime-400 uppercase font-black tracking-widest block mb-1">Execution Steps</span>
+                                <ol className="list-decimal list-inside space-y-1 text-slate-300">
+                                  {refExercise.instructions.map((stepStr, sIdx) => (
+                                    <li key={sIdx} className="leading-relaxed">{stepStr}</li>
+                                  ))}
+                                </ol>
+                              </div>
+
+                              <div>
+                                <span className="text-[10px] text-orange-400 uppercase font-black tracking-widest block mb-1">Common Pitfalls to Avoid</span>
+                                <ul className="list-disc list-inside space-y-1 text-slate-400">
+                                  {refExercise.commonMistakes.map((mistake, mIdx) => (
+                                    <li key={mIdx}>{mistake}</li>
+                                  ))}
+                                </ul>
+                              </div>
+
+                              {refExercise.alternatives && refExercise.alternatives.length > 0 && (
+                                <div>
+                                  <span className="text-[10px] text-slate-400 uppercase font-bold block mb-1">Alternative Movements</span>
+                                  <div className="flex flex-wrap gap-1">
+                                    {refExercise.alternatives.map((alt, aIdx) => (
+                                      <span key={aIdx} className="bg-slate-900 rounded px-2 py-0.5 text-slate-400 text-[10px]">
+                                        {alt}
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
                         </div>
                       )}
                     </div>
